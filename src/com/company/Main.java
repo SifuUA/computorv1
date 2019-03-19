@@ -13,7 +13,6 @@ public class Main {
 
     public static void main(String[] args) {
         String correctEquation = checkErrors();
-        System.out.println(correctEquation);
         double [] coeficient = findCoef(correctEquation);
         printReducedForm(coeficient);
         int degree = printAndGetDegree(coeficient);

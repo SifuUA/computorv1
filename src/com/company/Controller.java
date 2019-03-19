@@ -1,7 +1,10 @@
 package com.company;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -34,6 +37,8 @@ public class Controller {
         for (ArrayList str : listInList) {
             if (str.get(0).equals("="))
                 leftSide = false;
+            if (str.size() == 1)
+                continue;
             if (str.get(1).equals(""))
                 str.add(1, 1);
             if (str.get(3).equals("") || str.get(3).equals("0"))
@@ -55,12 +60,19 @@ public class Controller {
         String[] arr = new String[2];
         if (coefic[2] != 0.0) {
             if (discr > 0.0) {
-                arr[0] = String.valueOf(-coefic[1] - Math.pow(discr, (1 / 2d)) / (2 * coefic[2]));
-                arr[1] = String.valueOf(-coefic[1] + Math.pow(discr, (1 / 2d)) / (2 * coefic[2]));
+                arr[0] = String.valueOf((-coefic[1] - Math.pow(discr, (1 / 2d))) / (2 * coefic[2]));
+                arr[1] = String.valueOf((-coefic[1] + Math.pow(discr, (1 / 2d))) / (2 * coefic[2]));
                 return arr;
-            } else if (discr < 0.0)
-                return arr;//(-coefs[1] - 1j * (-des)**(1/2)) / (2 * coefs[2]),  (-coefs[1] + 1j * (-des)**(1/2)) / (2 * coefs[2])
-            else {
+            } else if (discr < 0.0) {
+                double n1 = -coefic[1] / (2 * coefic[2]);
+                double n2 = Math.pow(-discr, (1 / 2d)) / (2 * coefic[2]);
+                arr[0] = n1 + "-" + new DecimalFormat("#.######",
+                        DecimalFormatSymbols.getInstance(Locale.US)).format(n2) + "j";
+                arr[1] = n1 + "+" + new DecimalFormat("#.######",
+                        DecimalFormatSymbols.getInstance(Locale.US)).format(n2) + "j";
+                return arr;
+
+            } else {
                 arr[0] = String.valueOf(-coefic[1] / (2 * coefic[2]));
                 arr[1] = "+";
             }
@@ -73,9 +85,10 @@ public class Controller {
             arr[0] = String.valueOf(-coefic[0] / coefic[1]);
             arr[1] = "+";
             return arr;
+        } else {
+            arr[0] = "+";
+            arr[1] = "+";
         }
-        arr[0] = "+";
-        arr[1] = "+";
         return arr;
     }
 }

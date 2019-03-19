@@ -3,6 +3,8 @@ package com.company;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,13 +20,17 @@ public class ErrorValidataion {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             System.out.println("Please enter your equation:\n");
             String result = reader.readLine();
+            int res = doMatch(pattern, result);
 
             if (result.isEmpty()) {
                 throw new IllegalArgumentException();
-            } else if (!doMatch(pattern, result))
-            {
+            } else if (res > 2) {
+                System.out.println("Polynomial degree: " + res);
+                System.out.println("The polynomial degree is stricly greater than " + res + ", I can't solve.");
+                System.exit(1);
+            } else
                 return result = result.replaceAll("\\s+", "");
-            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -32,7 +38,23 @@ public class ErrorValidataion {
         return null;
     }
 
-    private static boolean doMatch(Pattern pattern, String str) {
-        return pattern.matcher(str).matches();
+    private static int doMatch(Pattern pattern, String str) {
+        Matcher m = pattern.matcher(str);
+        String res = "0";
+        int tmp = 0;
+        while (m.find()) {
+            res = m.group();
+        }
+        res = res.replaceAll("\\D+", "");
+        /*if (res.equals("0")){
+            res = str.replaceAll("\\D+", " ");
+            String[] list = res.split(" ");
+            for (String num : list) {
+                if (Integer.parseInt(num) > tmp)
+                   tmp = Integer.parseInt(num);
+            }
+            return tmp;
+        }*/
+        return Integer.parseInt(res);
     }
 }
