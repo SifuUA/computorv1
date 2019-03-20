@@ -19,7 +19,6 @@ public class Main {
         double discriminant = Math.pow(coeficient[1], 2) - 4 * coeficient[0]*coeficient[2];
         printDescr(discriminant, degree);
         printResult(getAnswer(coeficient, discriminant), coeficient);
-
     }
 
 }

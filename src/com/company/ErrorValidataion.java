@@ -22,39 +22,48 @@ public class ErrorValidataion {
             String result = reader.readLine();
             int res = doMatch(pattern, result);
 
-            if (result.isEmpty()) {
-                throw new IllegalArgumentException();
-            } else if (res > 2) {
-                System.out.println("Polynomial degree: " + res);
-                System.out.println("The polynomial degree is stricly greater than " + res + ", I can't solve.");
-                System.exit(1);
-            } else
-                return result = result.replaceAll("\\s+", "");
-
-
+            if (correctInput(result, res)) {
+                return result.replaceAll("\\s+", "");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    private static boolean correctInput(String result, int res) {
+        if (result.isEmpty()) {
+            System.out.println("Input is empty ...");
+            throw new IllegalArgumentException();
+        } else if (!checkInput(result)) {
+            System.out.println("Input equation is not valid!");
+        } else if (res > 2) {
+            System.out.println("Polynomial degree: " + res);
+            System.out.println("The polynomial degree is strictly greater than " + res + ", I can't solve.");
+            System.exit(1);
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean checkInput(String result) {
+        String target = "1234567890^+=-*/X. ";
+        char[] charsArray = result.toCharArray();
+        for (int i = 0; i < charsArray.length; i++) {
+            if (!target.contains(String.valueOf(charsArray[i])))
+                return false;
+        }
+        return true;
+    }
+
     private static int doMatch(Pattern pattern, String str) {
         Matcher m = pattern.matcher(str);
         String res = "0";
-        int tmp = 0;
         while (m.find()) {
             res = m.group();
         }
         res = res.replaceAll("\\D+", "");
-        /*if (res.equals("0")){
-            res = str.replaceAll("\\D+", " ");
-            String[] list = res.split(" ");
-            for (String num : list) {
-                if (Integer.parseInt(num) > tmp)
-                   tmp = Integer.parseInt(num);
-            }
-            return tmp;
-        }*/
         return Integer.parseInt(res);
     }
 }
