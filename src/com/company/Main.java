@@ -20,5 +20,4 @@ public class Main {
         printDescr(discriminant, degree);
         printResult(getAnswer(coeficient, discriminant), coeficient);
     }
-
 }

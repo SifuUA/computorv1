@@ -26,7 +26,6 @@ public class OutPut {
         System.out.println(result);
     }
 
-
     public static String convertor(double d) {
         if (d == (long) d) {
             if (d < 0) {
@@ -86,5 +85,3 @@ public class OutPut {
                     new DecimalFormat("#.##########", DecimalFormatSymbols.getInstance(Locale.US)).format(Double.parseDouble(arr[0]))));
     }
 }
-//5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0
-//new DecimalFormat("#.##########").format(Double.parseDouble(arr[0]))

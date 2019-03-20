@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
 
 /**
  * Created by okres on 3/9/19.
@@ -21,19 +19,13 @@ public class Controller {
         List<ArrayList> listInList = new ArrayList<>();
         String resRepl = equation.replace("'(X(?!\\^))", "X^1").replace("--", "+").replace("+-", "-").replace("-+", "-");
 
-        Matcher m = Pattern.compile("([-+=]?)([\\d\\.]+)?(\\*?[xX](?:\\^(\\d+))?)?")
-                .matcher(resRepl);
-        while (m.find()) {
-            ArrayList<String> tmpList = new ArrayList<>();
-            int i = 1;
-            while (i < m.group().length() && i < 5) {
-                tmpList.add(m.group(i));
-                i++;
-            }
-            if (tmpList.size() > 0)
-                listInList.add(tmpList);
-        }
+        myMatcher(listInList, resRepl);
+        coefSwitcher(leftSide, array, listInList);
+        return array;
+    }
 
+    private static void coefSwitcher(boolean leftSide, double[] array, List<ArrayList> listInList) {
+        int index;
         for (ArrayList str : listInList) {
             if (str.get(0).equals("="))
                 leftSide = false;
@@ -52,30 +44,28 @@ public class Controller {
             else
                 array[index] = array[index] - Double.parseDouble(String.valueOf(str.get(1)));
         }
-        return array;
+    }
+
+    private static void myMatcher(List<ArrayList> listInList, String resRepl) {
+        Matcher m = Pattern.compile("([-+=]?)([\\d\\.]+)?(\\*?[xX](?:\\^(\\d+))?)?")
+                .matcher(resRepl);
+        while (m.find()) {
+            ArrayList<String> tmpList = new ArrayList<>();
+            int i = 1;
+            while (i < m.group().length() && i < 5) {
+                tmpList.add(m.group(i));
+                i++;
+            }
+            if (tmpList.size() > 0)
+                listInList.add(tmpList);
+        }
     }
 
 
     public static String[] getAnswer(double[] coefic, double discr) {
         String[] arr = new String[2];
         if (coefic[2] != 0.0) {
-            if (discr > 0.0) {
-                arr[0] = String.valueOf((-coefic[1] - Math.pow(discr, (1 / 2d))) / (2 * coefic[2]));
-                arr[1] = String.valueOf((-coefic[1] + Math.pow(discr, (1 / 2d))) / (2 * coefic[2]));
-                return arr;
-            } else if (discr < 0.0) {
-                double n1 = -coefic[1] / (2 * coefic[2]);
-                double n2 = Math.pow(-discr, (1 / 2d)) / (2 * coefic[2]);
-                arr[0] = n1 + "-" + new DecimalFormat("#.######",
-                        DecimalFormatSymbols.getInstance(Locale.US)).format(n2) + "j";
-                arr[1] = n1 + "+" + new DecimalFormat("#.######",
-                        DecimalFormatSymbols.getInstance(Locale.US)).format(n2) + "j";
-                return arr;
-
-            } else {
-                arr[0] = String.valueOf(-coefic[1] / (2 * coefic[2]));
-                arr[1] = "+";
-            }
+            if (firstRefPart(coefic, discr, arr)) return arr;
         } else if (coefic[1] != 0.0) {
             if (-coefic[0] / coefic[1] == -0.0 || -coefic[0] / coefic[1] == -0) {
                 arr[0] = String.valueOf(0);
@@ -90,6 +80,26 @@ public class Controller {
             arr[1] = "+";
         }
         return arr;
+    }
+
+    private static boolean firstRefPart(double[] coefic, double discr, String[] arr) {
+        if (discr > 0.0) {
+            arr[0] = String.valueOf((-coefic[1] - Math.pow(discr, (1 / 2d))) / (2 * coefic[2]));
+            arr[1] = String.valueOf((-coefic[1] + Math.pow(discr, (1 / 2d))) / (2 * coefic[2]));
+            return true;
+        } else if (discr < 0.0) {
+            double n1 = -coefic[1] / (2 * coefic[2]);
+            double n2 = Math.pow(-discr, (1 / 2d)) / (2 * coefic[2]);
+            arr[0] = n1 + "-" + new DecimalFormat("#.######",
+                    DecimalFormatSymbols.getInstance(Locale.US)).format(n2) + "j";
+            arr[1] = n1 + "+" + new DecimalFormat("#.######",
+                    DecimalFormatSymbols.getInstance(Locale.US)).format(n2) + "j";
+            return true;
+        } else {
+            arr[0] = String.valueOf(-coefic[1] / (2 * coefic[2]));
+            arr[1] = "+";
+        }
+        return false;
     }
 }
 //5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0
